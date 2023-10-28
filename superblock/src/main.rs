@@ -33,6 +33,20 @@ pub struct Superblock {
     pub root_level: u8,             // 1
     pub chunk_root_level: u8,       // 1
     pub log_root_level: u8,         // 1
+    pub dev_id: u64,                // 8
+    pub dev_total_bytes: u64,       // 8
+    pub dev_bytes_used: u64,        // 8
+    pub dev_io_align: u32,          // 8
+    pub dev_type: u64,              // 8
+    pub dev_generation: u64,        // 8
+    pub dev_start_offset: u64,      // 8
+    pub dev_group: u32,             // 4
+    pub dev_seek_speed: u8,         // 1
+    pub dev_bandwidth: u8,          // 1
+    pub dev_uuid: [u8; 16],         // UUID
+    pub dev_fsid: [u8; 16],         // FSID
+    pub label: [u8; 256],           // Labels
+    pub padding: [u8; 3541]
 }
 
 /// Superblock Position for BTRFS
