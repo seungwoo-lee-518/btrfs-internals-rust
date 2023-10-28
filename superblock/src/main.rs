@@ -37,7 +37,9 @@ pub struct Superblock {
     pub dev_id: u64,                // 8
     pub dev_total_bytes: u64,       // 8
     pub dev_bytes_used: u64,        // 8
-    pub dev_io_align: u32,          // 8
+    pub dev_io_align: u32,          // 4
+    pub dev_io_width: u32,          // 4
+    pub dev_sector_size: u32,       // 4
     pub dev_type: u64,              // 8
     pub dev_generation: u64,        // 8
     pub dev_start_offset: u64,      // 8
@@ -47,8 +49,9 @@ pub struct Superblock {
     pub dev_uuid: [u8; 16],         // UUID
     pub dev_fsid: [u8; 16],         // FSID
     pub label: [u8; 256],           // Labels
-    #[derivative(Debug="ignore")]
-    pub padding: [u8; 3541]
+    pub cache_generation: u64,      // 8
+    pub uuid_tree_generation: u64,  // 8
+    pub padding: [u8; 3525]
 }
 
 /// Superblock Position for BTRFS
@@ -89,5 +92,8 @@ fn main() {
         }
     };
 
-    println!("superblock: {:#?}", superblock);
+    println!("superblock: {:?}", superblock);
+    println!("superblock.fsid: {:x?}", superblock.fsid);
+    println!("superblock.dev.fsid: {:x?}", superblock.dev_fsid);
+    println!("superblock.dev.uuid: {:x?}", superblock.dev_uuid);
 }
