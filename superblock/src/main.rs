@@ -1,8 +1,9 @@
 use std::{fs::File, io::{Seek, Read, Cursor}};
 
 use binrw::BinRead;
+use derivative::Derivative;
 
-#[derive(BinRead, Debug)]
+#[derive(BinRead, Debug, Derivative)]
 #[allow(dead_code)]
 #[br(little)]
 pub struct Superblock {
@@ -46,6 +47,7 @@ pub struct Superblock {
     pub dev_uuid: [u8; 16],         // UUID
     pub dev_fsid: [u8; 16],         // FSID
     pub label: [u8; 256],           // Labels
+    #[derivative(Debug="ignore")]
     pub padding: [u8; 3541]
 }
 
@@ -87,5 +89,5 @@ fn main() {
         }
     };
 
-    println!("superblock: {:?}", superblock);
+    println!("superblock: {:#?}", superblock);
 }
