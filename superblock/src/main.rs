@@ -79,8 +79,6 @@ fn main() {
         std::process::exit(1);
     }
 
-    println!("raw contents: {:?}, len={:?}", contents, contents.len());
-
     let superblock = match Superblock::read(&mut Cursor::new(contents)) {
         Ok(v) => v,
         Err(err) => {
