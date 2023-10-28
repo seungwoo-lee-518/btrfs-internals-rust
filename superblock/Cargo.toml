@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 binrw = "0.13.0"
+scopeguard = "1.2.0"
