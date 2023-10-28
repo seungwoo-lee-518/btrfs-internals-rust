@@ -5,34 +5,34 @@ use binrw::BinRead;
 #[derive(BinRead, Debug)]
 #[allow(dead_code)]
 #[br(little)]
-struct Superblock {
-    csum: [u8; 32],             // 32
-    fsid: [u8; 16],             // 16
-    bytenr: u64,                // 8
-    flags: u64,                 // 8
-    magic: [u8; 0x8],           // 8
-    generation: u64,            // 8
-    root_tree: u64,             // 8
-    chunk_tree: u64,            // 8
-    log_tree: u64,              // 8
-    log_root_transid: u64,      // 8
-    total_bytes: u64,           // 8
-    bytes_used: u64,            // 8
-    root_dir_objectid: u64,     // 8
-    num_devices: u64,           // 8
-    sectorsize: u32,            // 4
-    nodesize: u32,              // 4
-    leafsize: u32,              // 4
-    stripesize: u32,            // 4
-    sys_chunk_array_size: u32,  // 4
-    chunk_root_generation: u64, // 8
-    compat_flags: u64,          // 8
-    compat_ro_flags: u64,       // 8
-    incompat_flags: u64,        // 8
-    csum_type: u16,             // 2
-    root_level: u8,             // 1
-    chunk_root_level: u8,       // 1
-    log_root_level: u8,         // 1
+pub struct Superblock {
+    pub csum: [u8; 32],             // 32
+    pub fsid: [u8; 16],             // 16
+    pub bytenr: u64,                // 8
+    pub flags: u64,                 // 8
+    pub magic: [u8; 0x8],           // 8
+    pub generation: u64,            // 8
+    pub root_tree: u64,             // 8
+    pub chunk_tree: u64,            // 8
+    pub log_tree: u64,              // 8
+    pub log_root_transid: u64,      // 8
+    pub total_bytes: u64,           // 8
+    pub bytes_used: u64,            // 8
+    pub root_dir_objectid: u64,     // 8
+    pub num_devices: u64,           // 8
+    pub sectorsize: u32,            // 4
+    pub nodesize: u32,              // 4
+    pub leafsize: u32,              // 4
+    pub stripesize: u32,            // 4
+    pub sys_chunk_array_size: u32,  // 4
+    pub chunk_root_generation: u64, // 8
+    pub compat_flags: u64,          // 8
+    pub compat_ro_flags: u64,       // 8
+    pub incompat_flags: u64,        // 8
+    pub csum_type: u16,             // 2
+    pub root_level: u8,             // 1
+    pub chunk_root_level: u8,       // 1
+    pub log_root_level: u8,         // 1
 }
 
 /// Superblock Position for BTRFS
