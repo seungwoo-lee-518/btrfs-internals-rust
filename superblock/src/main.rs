@@ -3,6 +3,8 @@ use std::{fs::File, io::{Seek, Read, Cursor}};
 use binrw::BinRead;
 use derivative::Derivative;
 
+mod csum;
+
 #[derive(BinRead, Debug, Derivative)]
 #[allow(dead_code)]
 #[br(little)]
