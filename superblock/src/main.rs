@@ -1,11 +1,13 @@
 use std::{fs::File, io::{Seek, Read, Cursor}};
 
-use binrw::BinRead;
+use binrw::{BinRead, BinWrite};
 use derivative::Derivative;
+
+use crate::csum::get_hash;
 
 mod csum;
 
-#[derive(BinRead, Debug, Derivative)]
+#[derive(BinRead, BinWrite, Debug, Derivative, Clone)]
 #[allow(dead_code)]
 #[br(little)]
 pub struct Superblock {
@@ -98,4 +100,5 @@ fn main() {
     println!("superblock.fsid: {:x?}", superblock.fsid);
     println!("superblock.dev.fsid: {:x?}", superblock.dev_fsid);
     println!("superblock.dev.uuid: {:x?}", superblock.dev_uuid);
+    println!("csum: {:?}", get_hash(superblock));
 }
