@@ -1,4 +1,4 @@
-use std::{fs::File, io::{Seek, Read, Cursor}};
+use std::{fs::File, io::Cursor, os::unix::prelude::FileExt};
 
 use binrw::{BinRead, BinWrite};
 use derivative::Derivative;
@@ -9,17 +9,17 @@ mod csum;
 
 #[derive(BinRead, BinWrite, Debug, Derivative, Clone)]
 #[allow(dead_code)]
-#[br(little)]
+#[brw(little)]
 pub struct Superblock {
     pub csum: [u8; 32],             // 32
     pub fsid: [u8; 16],             // 16
     pub bytenr: u64,                // 8
     pub flags: u64,                 // 8
-    pub magic: [u8; 0x8],           // 8
+    pub magic: [u8; 8],             // 8
     pub generation: u64,            // 8
     pub root_tree: u64,             // 8
     pub chunk_tree: u64,            // 8
-    pub log_tree: u64,              // 8
+    pub log_root: u64,              // 8
     pub log_root_transid: u64,      // 8
     pub total_bytes: u64,           // 8
     pub bytes_used: u64,            // 8
@@ -38,6 +38,14 @@ pub struct Superblock {
     pub root_level: u8,             // 1
     pub chunk_root_level: u8,       // 1
     pub log_root_level: u8,         // 1
+    pub dev_item: DevItem,
+    pub label: [u8; 256],           // Labels
+    pub padding: [u8; 3541]
+}
+
+#[derive(BinRead, BinWrite, Copy, Clone, Debug)]
+#[brw(little)]
+pub struct DevItem {
     pub dev_id: u64,                // 8
     pub dev_total_bytes: u64,       // 8
     pub dev_bytes_used: u64,        // 8
@@ -52,18 +60,14 @@ pub struct Superblock {
     pub dev_bandwidth: u8,          // 1
     pub dev_uuid: [u8; 16],         // UUID
     pub dev_fsid: [u8; 16],         // FSID
-    pub label: [u8; 256],           // Labels
-    pub cache_generation: u64,      // 8
-    pub uuid_tree_generation: u64,  // 8
-    pub padding: [u8; 3525]
 }
 
 /// Superblock Position for BTRFS
 static BTRFS_SUPERBLOCK_POS: u64 = 0x10000;
-static BTRFS_SUPERBLOCK_SIZE: usize = 4096;
+const BTRFS_SUPERBLOCK_SIZE: usize = 4096;
 
 fn main() {
-    let mut f = match File::open("btrfs.img") {
+    let f = match File::open("btrfs.img") {
         Ok(v) => v,
         Err(err) => {
             eprintln!("got error while read file: {err}");
@@ -71,20 +75,10 @@ fn main() {
         }
     };
 
-    let mut contents = Vec::with_capacity(BTRFS_SUPERBLOCK_SIZE);
-
-    match f.seek(std::io::SeekFrom::Start(BTRFS_SUPERBLOCK_POS)) {
-        Ok(v) => {
-            println!("seek success: {v}");
-        },
-        Err(err) => {
-            eprintln!("got error while seek: {err}");
-            std::process::exit(1);
-        },
-    };
-
-    if let Err(err) = f.take(BTRFS_SUPERBLOCK_SIZE as u64).read_to_end(&mut contents) {
-        eprintln!("got error while read: {err}");
+    let mut contents = [0u8; BTRFS_SUPERBLOCK_SIZE];
+    
+    if let Err(err) = f.read_exact_at(&mut contents, BTRFS_SUPERBLOCK_POS) {
+        eprintln!("got error while read_exact_at: {err}");
         std::process::exit(1);
     }
 
@@ -97,8 +91,8 @@ fn main() {
     };
 
     println!("superblock: {:?}", superblock);
-    println!("superblock.fsid: {:x?}", superblock.fsid);
-    println!("superblock.dev.fsid: {:x?}", superblock.dev_fsid);
-    println!("superblock.dev.uuid: {:x?}", superblock.dev_uuid);
+    println!("superblock.fsid: {:02x?}", superblock.fsid);
+    println!("superblock.dev.fsid: {:02x?}", superblock.dev_item.dev_fsid);
+    println!("superblock.dev.uuid: {:?}", superblock.dev_item.dev_uuid);
     println!("csum: {:?}", get_hash(superblock));
 }
