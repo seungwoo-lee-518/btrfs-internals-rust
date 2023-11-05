@@ -1,0 +1,17 @@
+[package]
+name = "btrfs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.75"
+binrw = "0.13.0"
+crc32c = "0.6.4"
+derivative = "2.2.0"
+hex = "0.4"
+
+
+[dev-dependencies]
+testdir = "0.8.1"
